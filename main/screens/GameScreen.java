@@ -19,6 +19,9 @@ public class GameScreen extends JPanel
   private Tile[][][] tiles;
   
   private ArrayList<Point> ends = new ArrayList<>();
+  
+  private final ArrayList<Move> performedMoves = new ArrayList<>();
+  
   private final main.Window window;
   
   private int playerX,playerY;
@@ -66,6 +69,8 @@ public class GameScreen extends JPanel
     if ( tiles != null )
     {
       int canMove = -1;
+      int boxX = -1;
+      int boxY = -1;
       switch ( e.getKeyCode() )
       {
         case KeyEvent . VK_W:
@@ -80,9 +85,12 @@ public class GameScreen extends JPanel
           if ( canMove == 0 )
           {
             tiles[playerX][playerY-1][1]=tiles[playerX][playerY][1];
+            boxX = playerX;
+            boxY = playerY - 1;
           }
           
         
+          performedMoves . add ( new Move (0,playerX,playerY,boxX,boxY) );
           tiles[playerX][playerY][1]=tiles[playerX][playerY+1][1];
           tiles[playerX][playerY+1][1] = new Empty();
           break;
@@ -99,9 +107,12 @@ public class GameScreen extends JPanel
           if ( canMove == 0 )
           {
             tiles[playerX][playerY+1][1]=tiles[playerX][playerY][1];
+            boxX = playerX;
+            boxY = playerY + 1;
           }
           
-        
+          
+          performedMoves . add ( new Move (3,playerX,playerY,boxX,boxY) );
           tiles[playerX][playerY][1]=tiles[playerX][playerY-1][1];
           tiles[playerX][playerY-1][1] = new Empty();
           break;
@@ -118,9 +129,12 @@ public class GameScreen extends JPanel
           if ( canMove == 0 )
           {
             tiles[playerX+1][playerY][1]=tiles[playerX][playerY][1];
+            boxX = playerX+1;
+            boxY = playerY;
           }
           
-        
+          performedMoves . add ( new Move (2,playerX,playerY,boxX,boxY) );
+          
           tiles[playerX][playerY][1]=tiles[playerX-1][playerY][1];
           tiles[playerX-1][playerY][1] = new Empty();
           break;
@@ -136,10 +150,23 @@ public class GameScreen extends JPanel
           if ( canMove == 0 )
           {
             tiles[playerX-1][playerY][1]=tiles[playerX][playerY][1];
+            boxX = playerX-1;
+            boxY = playerY;
           }
+          
+          performedMoves . add ( new Move (1,playerX,playerY,boxX,boxY) );
           
           tiles[playerX][playerY][1]=tiles[playerX+1][playerY][1];
           tiles[playerX+1][playerY][1] = new Empty();
+          break;
+          
+        case KeyEvent.VK_U:
+          if ( performedMoves.size() == 0 ) break;
+          Move last = performedMoves.remove(performedMoves.size()-1);
+          last.undo(tiles);
+          playerX = last.getPlayerXBefore();
+          playerY = last.getPlayerYBefore();
+          repaint();
           break;
         
       }
