@@ -23,6 +23,9 @@ public class Create extends JDialog
     End ()
   }
   
+  private final JSlider scaleX = new JSlider ( JSlider.HORIZONTAL , 100 , 400 , 100 );
+  private final JSlider scaleY = new JSlider ( JSlider.VERTICAL , 100 , 400 , 100 );
+  
   private Tool currentTool = Tool.Eraser;
   
   public Create ( main.Window window )
@@ -30,9 +33,47 @@ public class Create extends JDialog
     super ( window , "Map creator" , true );
     setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     setSize(1000,1000);
-    add ( new Preview ( this ) , BorderLayout.CENTER );
+    Preview preview = new Preview ( this );
+    add ( preview , BorderLayout.CENTER );
+    
+    
     
     JToolBar toolbar = new JToolBar ();
+    prepareTools ( toolbar );
+    
+    
+    
+    scaleX . setLabelTable ( scaleX . createStandardLabels ( 20 , 100 ) );
+    scaleX . setPaintLabels(true);
+    
+    
+    
+    scaleY . setLabelTable ( scaleX . createStandardLabels ( 20 , 100 ) );
+    scaleY . setPaintLabels(true);
+    
+    ChangeListener listener = (ChangeEvent e)->
+    {
+      preview.setScaleX ( scaleX.getValue()*1d / 100d );
+      preview.setScaleY ( scaleY.getValue()*1d / 100d );
+      preview.repaint();
+    };
+    
+    scaleX . addChangeListener(listener);
+    scaleY . addChangeListener(listener);
+    
+    add(toolbar,BorderLayout.SOUTH);
+    add(scaleX,BorderLayout.NORTH);
+    add(scaleY,BorderLayout.WEST);
+  }
+  
+  public void setScale ( int x , int y )
+  {
+    scaleX . setValue ( x );
+    scaleY . setValue ( y );
+  }
+  
+  private void prepareTools ( JToolBar toolbar )
+  {
     try ( InputStream in = Create.class.getResourceAsStream("Eraser.png") )
     {
       Image img = ImageIO.read(in);
@@ -40,7 +81,7 @@ public class Create extends JDialog
       {
         public void actionPerformed ( ActionEvent e )
         {
-          System.out.println("Empty");
+          setTool ( Tool.Eraser );
         }
       });
     
@@ -81,8 +122,6 @@ public class Create extends JDialog
         setTool ( Tool.Wall );
       }
     });
-    
-    add(toolbar,BorderLayout.SOUTH);
   }
   
   public Tool getTool ()
@@ -93,6 +132,6 @@ public class Create extends JDialog
   private void setTool ( Tool t )
   {
     currentTool = t;
-    System.out.println ( t );
+    //System.out.println ( t );
   }
 }
