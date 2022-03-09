@@ -2,6 +2,7 @@ package main.create;
 
 import main.*;
 import main.tiles.*;
+import main.input.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -26,6 +27,8 @@ public class Create extends JDialog
   private final JSlider scaleX = new JSlider ( JSlider.HORIZONTAL , 100 , 400 , 100 );
   private final JSlider scaleY = new JSlider ( JSlider.VERTICAL , 100 , 400 , 100 );
   
+  private final Preview preview;
+  
   private Tool currentTool = Tool.Eraser;
   
   public Create ( main.Window window )
@@ -33,7 +36,7 @@ public class Create extends JDialog
     super ( window , "Map creator" , true );
     setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
     setSize(1000,1000);
-    Preview preview = new Preview ( this );
+    preview = new Preview ( this );
     add ( preview , BorderLayout.CENTER );
     
     
@@ -120,6 +123,23 @@ public class Create extends JDialog
       public void actionPerformed ( ActionEvent e )
       {
         setTool ( Tool.Wall );
+      }
+    });
+    
+    toolbar.addSeparator();
+    
+    toolbar.add(new AbstractAction("Save")
+    {
+      public void actionPerformed ( ActionEvent e )
+      {
+        try
+        {
+          System.out.println(MapParser.toString(preview.getTiles()));
+        }
+        catch ( UnsupportedMapParsingException ex )
+        {
+          JOptionPane . showMessageDialog ( preview , ex.getMessage() , "An error has ocured" , JOptionPane.ERROR_MESSAGE );
+        }
       }
     });
   }

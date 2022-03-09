@@ -117,6 +117,11 @@ public class Preview extends JPanel
         {
           offsetX += ( lastMouseX - e.getX() );
           offsetY += ( lastMouseY - e.getY() );
+          
+          offsetX = ( (int) ( getWidth()  * scaleX - offsetX ) < getWidth()  ? (int) ( getWidth()  * scaleX ) - getWidth  () : offsetX );
+          offsetY = ( (int) ( getHeight() * scaleY - offsetY ) < getHeight() ? (int) ( getHeight() * scaleY ) - getHeight () : offsetY );
+          offsetX = offsetX < 0 ? 0 : offsetX;
+          offsetY = offsetY < 0 ? 0 : offsetY;
           lastMouseX = e.getX();
           lastMouseY = e.getY();
           repaint();
@@ -196,6 +201,11 @@ public class Preview extends JPanel
   public void setScaleY ( double scaleY )
   {
     this . scaleY = scaleY;
+  }
+  
+  public Tile[][][] getTiles ()
+  {
+    return tiles;
   }
   
   
